@@ -14,6 +14,62 @@ load("lego_sales.RData")
 <!-- Covert the `sales` object into a tidy data frame. Be sure to include a write up of your methods. -->
 
 ```{r}
+sales.df = data.frame("gender" = character(),
+                      "first_name" = character(),
+                      "last_name" = character(),
+                      "age" = integer(),
+                      "phone_number" = character(),
+                      "hobbies" = character(),
+                      "purchase.SetID" = integer(),
+                      "purchase.Number" = character(),
+                      "purchase.Theme" = character(),
+                      "purchase.Subtheme" = character(),
+                      "purchase.Year" = integer(),
+                      "purchase.Name" = character(),
+                      "purchase.Pieces" = integer(),
+                      "purchase.USPrice" = double(),
+                      "purchase.ImageURL" = character(),
+                      "purchase.Quantity" = integer(),
+                      stringsAsFactors = FALSE)
+for (i in 1:length(sales)) {
+  for (j in 1:length(sales[[i]]$purchases)) {
+    gender = sales[[i]]$gender
+    first_name = sales[[i]]$first_name
+    last_name = sales[[i]]$last_name
+    age = sales[[i]]$age
+    phone_number = sales[[i]]$phone_number
+    if (is.null(phone_number)) {
+      phone_number = "Not Listed"
+    }
+    hobbies = list(sales[[i]]$hobbies)
+    setID = sales[[i]]$purchases[[j]]$SetID
+    number = sales[[i]]$purchases[[j]]$Number
+    theme = sales[[i]]$purchases[[j]]$Theme
+    subtheme = sales[[i]]$purchases[[j]]$Subtheme
+    year = sales[[i]]$purchases[[j]]$Year
+    name = sales[[i]]$purchases[[j]]$Name
+    pieces = sales[[i]]$purchases[[j]]$Pieces
+    price = sales[[i]]$purchases[[j]]$USPrice
+    url = sales[[i]]$purchases[[j]]$ImageURL
+    quant = sales[[i]]$purchases[[j]]$Quantity
+    df = data.frame("gender" = gender, 
+                    "first_name" = first_name, 
+                    "last_name" = last_name, "age" = age, 
+                    "phone_number" = phone_number, 
+                    "hobbies" = cbind(hobbies), 
+                    "purchase.SetID" = setID, 
+                    "purchase.Number" = number, 
+                    "purchase.Theme" = theme, 
+                    "purchase.Subtheme" = subtheme, 
+                    "purchase.Year" = year, 
+                    "purchase.Name" = name, 
+                    "purchase.Pieces" = pieces, 
+                    "purchase.USPrice" = price, 
+                    "purchase.ImageURL" = url, 
+                    "purchase.Quantity" = quant)
+    sales.df = rbind(sales.df,df)
+  }
+}
 ```
 
 
