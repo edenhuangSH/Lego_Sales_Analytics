@@ -11,26 +11,43 @@ load("lego_sales.RData")
 
 ### Task 1 - Tidying the data
 
+Intialize the Data Frame
 ```{r}
 # find top level names
 name0 = sales %>% unlist(recursive=FALSE) %>% names() %>% unique()
 
 # identify subcatorgy names and number of rows
-sum_n = setNames(numeric(length(name)), name)
+sum_n = setNames(numeric(length(name0)), name0)
 cat_name = list()
 for (n in name0) {
     sum_n[n] = sapply(sales, function(x) length(x[[n]])) %>% sum()
-    cat_name[n] = sapply(sales, function(x) names(unlist(x[[n]])))
-    %>% unique()
+    cat_name[n] = sapply(sales, function(x) names(unlist(x[[n]]))) %>%                               unique()
 }
-cat_name = cat_name %>% unlist() %>% unique()
-name = c(name0, cat_name)
+# removes catagories without subcatagory names
+name = c(name0, unlist(cat_name, use.names=FALSE))
 
 # intialize the data frame given the extents discovered above
 lego_df = data.frame(matrix(nrow = max(sum_n), ncol = length(name)))
 colnames(lego_df) = name
 ```
 
+Fill the Data Frame
+```{r}
+for (j in cat_name[[i]]) {
+        lego_df[j] = sapply(sales, function(x) 
+                        sapply(x[[i]], function(x) x[[j]])) %>%
+                        unlist()
+}
+```
+
+```{r}
+# recursively fill in the purchases subcatagories
+for (i in name0) {
+    lego_df[i] = sapply(sales, function(x) 
+        rep(x[[i]], length.out = length(x[['purchases']]))) %>%
+            unlist()
+}
+```
 
 
 ## Task 2 - Processing the data
@@ -38,6 +55,7 @@ colnames(lego_df) = name
 1. What was the most common first name of purchasers? Last name?
 
 ```{r}
+
 ```
 
 2. What are the five most popular lego sets based on these data?
