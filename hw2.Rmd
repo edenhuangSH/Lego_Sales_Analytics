@@ -14,62 +14,48 @@ load("lego_sales.RData")
 <!-- Covert the `sales` object into a tidy data frame. Be sure to include a write up of your methods. -->
 
 ```{r}
-sales.df = data.frame("gender" = character(),
-                      "first_name" = character(),
-                      "last_name" = character(),
-                      "age" = integer(),
-                      "phone_number" = character(),
-                      "hobbies" = character(),
-                      "purchase.SetID" = integer(),
-                      "purchase.Number" = character(),
-                      "purchase.Theme" = character(),
-                      "purchase.Subtheme" = character(),
-                      "purchase.Year" = integer(),
-                      "purchase.Name" = character(),
-                      "purchase.Pieces" = integer(),
-                      "purchase.USPrice" = double(),
-                      "purchase.ImageURL" = character(),
-                      "purchase.Quantity" = integer(),
-                      stringsAsFactors = FALSE)
+## Get names of matrix
+info_names = c()
+purchase_names = c()
+n.purchase = 0
+for (i in 1:length(sales)) {
+  info_names = c(info_names, names(sales[[i]])) %>% unique()
+  for (j in 1:length(sales[[i]]$purchases)) {
+    purchase_names = c(purchase_names, names(sales[[i]]$purchases[[1]])) %>% unique()
+  }
+  n.purchase = n.purchase + length(sales[[i]]$purchases)
+}
+
+info_names = setdiff(info_names, "purchases")
+col_names = c(info_names, paste("purchase.", purchase_names,sep = ""))
+
+## Create an empty data frame
+sales_df = matrix(NA, nrow = n.purchase, ncol = length(col_names)) %>% data.frame() %>% setNames(col_names)
+sales_df$hobbies = as.list(sales_df$hobbies)
+
+## Iterate through the list to fill in the data frame
+idx = 0
 for (i in 1:length(sales)) {
   for (j in 1:length(sales[[i]]$purchases)) {
-    gender = sales[[i]]$gender
-    first_name = sales[[i]]$first_name
-    last_name = sales[[i]]$last_name
-    age = sales[[i]]$age
-    phone_number = sales[[i]]$phone_number
-    if (is.null(phone_number)) {
-      phone_number = "Not Listed"
+    idx = idx + 1
+    for (name1 in info_names) {
+      if (!is.null(sales[[i]][[name1]]) && length(sales[[i]][[name1]]) != 0) {
+        if (name1 == "hobbies") {
+          sales_df[[name1]][[idx]] = as.list(sales[[i]][[name1]])
+        } else {
+          sales_df[[name1]][idx] = sales[[i]][[name1]]
+        }
+      }
     }
-    hobbies = list(sales[[i]]$hobbies)
-    setID = sales[[i]]$purchases[[j]]$SetID
-    number = sales[[i]]$purchases[[j]]$Number
-    theme = sales[[i]]$purchases[[j]]$Theme
-    subtheme = sales[[i]]$purchases[[j]]$Subtheme
-    year = sales[[i]]$purchases[[j]]$Year
-    name = sales[[i]]$purchases[[j]]$Name
-    pieces = sales[[i]]$purchases[[j]]$Pieces
-    price = sales[[i]]$purchases[[j]]$USPrice
-    url = sales[[i]]$purchases[[j]]$ImageURL
-    quant = sales[[i]]$purchases[[j]]$Quantity
-    df = data.frame("gender" = gender, 
-                    "first_name" = first_name, 
-                    "last_name" = last_name, "age" = age, 
-                    "phone_number" = phone_number, 
-                    "hobbies" = cbind(hobbies), 
-                    "purchase.SetID" = setID, 
-                    "purchase.Number" = number, 
-                    "purchase.Theme" = theme, 
-                    "purchase.Subtheme" = subtheme, 
-                    "purchase.Year" = year, 
-                    "purchase.Name" = name, 
-                    "purchase.Pieces" = pieces, 
-                    "purchase.USPrice" = price, 
-                    "purchase.ImageURL" = url, 
-                    "purchase.Quantity" = quant)
-    sales.df = rbind(sales.df,df)
+    for (name2 in purchase_names) {
+      name.modified = paste("purchase.", name2, sep="")
+      if (!is.null(sales[[i]]$purchases[[j]][[name2]]) && length(sales[[i]]$purchases[[j]][[name2]]) != 0) {
+        sales_df[[name.modified]][idx] = sales[[i]]$purchases[[j]][[name2]]
+      }
+    }
   }
 }
+
 
 
 #still working on
