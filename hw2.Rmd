@@ -70,6 +70,35 @@ for (i in 1:length(sales)) {
     sales.df = rbind(sales.df,df)
   }
 }
+
+
+#still working on
+dat
+class(sales)
+length(sales)
+a = numeric(length(sales))
+for(i in 1:length(sales)){
+a[i] = length(sales[[i]])
+}
+names(sales[[1]])
+
+name1= c(names(sales[[1]]))
+name1
+
+name = vector( mode = "list")
+i=1
+for(i in 1:length(sales)){
+name[i] = c(names(sales[[i]]))
+}
+name
+
+
+length(list)
+max(a)
+min(list)
+sales[[1]]
+length(sales[[i]])
+names(sales[[i]])
 ```
 
 
