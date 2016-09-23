@@ -8,7 +8,6 @@ suppressMessages(library(dplyr))
 load("lego_sales.RData")
 ```
 
-
 ### Task 1 - Tidying the data
 
 Intialize the Data Frame
@@ -17,52 +16,65 @@ Intialize the Data Frame
 name0 = sales %>% unlist(recursive=FALSE) %>% names() %>% unique()
 
 # identify number of rows based on maxiumum number of each catagory
-sum_n = sapply(name0, function(x) 
-            sapply(sales, function(y) 
-                length(y[[x]]))) %>% colSums()
+sum_n = 
+    sapply(name0, function(x) 
+        sapply(sales, function(y) 
+            length(y[[x]]))) %>% 
+    colSums()
 
 # identify subcatagory names
-cat_name = sapply(name0, function(x)
-                sapply(sales, function(y)
-                    y[[x]] %>% unlist() %>% names()) %>%
-                unlist() %>% 
-                unique()) 
+cat_name = 
+    sapply(name0, function(x)
+        sapply(sales, function(y)
+            y[[x]] %>% 
+            unlist() %>%
+            names()) %>%
+        unlist() %>% 
+        unique()) 
 
-name = c(name0, unlist(cat_name, use.names=FALSE))
-
+# create list of column names
+cat_name = cat_name[!(sapply(cat_name, is.null))]
+name = c(name0, unlist(cat_name, use.names = FALSE))
+    
 # intialize the data frame given the extents discovered above
-lego_df = data.frame(matrix(nrow = max(sum_n), ncol = length(name)))
-colnames(lego_df) = name
+lego_df = matrix(nrow = max(sum_n), ncol = length(name)) %>%
+    data.frame() %>% 
+    tbl_df() %>%
+    setNames(name)
+
+lego_df$'hobbies' = as.list(lego_df$'hobbies')
 ```
 
-Fill the Data Frame
+Create a couple of helper functions
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
 rep_safe = function(x, t) {
-    if (is.null(x)) {
-        rep(NA, t)
-    } else if (length(x) == 1) {
-        rep(x, t)
+    if (is.null(x) | is.list(x)) {
+        rep(NA, t) 
+    } else if (length(x) != 1) {
+        list(x)[rep(1,t)]
     } else {
-        replicate(t, x)
+        rep(x, t)
     }
 }
 ```
 
 Loop over and fill the data frame
 ```{r}
-for (n in name) {
-    lego_df[n] = sapply(sales, function(x) 
-            rep_safe(x[[n]], length(x[['purchases']]))) %>%
-            unlist()
+name_max = 'purchases'
+for (n in name0) {
+    lego_df[[n]] = 
+        sapply(sales, function(x) 
+            rep_safe(x[[n]], length(x[[name_max]]))) %>%
+        unlist(recursive=FALSE)
     for (c in cat_name[[n]]) {
-        lego_df[c] = sapply(sales, function(x) 
-                        sapply(x[[n]], function(x) x[[c]])) %>%
-                        unlist()
+        lego_df[[c]] =
+            sapply(sales, function(x) 
+                sapply(x[[n]], function(y) y[[c]]))  %>%
+            unlist()
     }
 }
 ```
-
 
 ## Task 2 - Processing the data
 
@@ -70,32 +82,16 @@ for (n in name) {
 
 The most common first name is 
 ```{r}
-lego_df %>%  
-    select(first_name, last_name) %>%
-    distinct() %>%
-    count(first_name) %>% 
-    slice(which.max(n))
-
-lego_df %>%  
-    select(first_name, last_name) %>%
-    distinct() %>%
-    count(last_name) %>% 
-    slice(which.max(n))
 ```
 
 2. What are the five most popular lego sets based on these data?
 
 ```{r}
-lego_df %>%
-    select()
 ```
 
 3. Which five customers have spent the most money so far and how much have they spent?
 
 ```{r}
-lego_df %>%
-    select(first_name, last_name, Quantity, USPrice) %>%
-    group_by(first_name, last_name) %>%
 ```
 
 4. Which lego theme has made the most money for lego?
@@ -106,9 +102,6 @@ lego_df %>%
 5. Do men or women buy more lego sets (per person) on average?
 
 ```{r}
-lego_df %>% 
-    select(first_name, last_name, gender, Quantity) %>%
-    mutate()
 ```
 
 6. What are the five most popular hobbies of lego purchasers?
