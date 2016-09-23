@@ -32,6 +32,9 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 .Rproj.user
+<<<<<<< HEAD
 *.Rproj
 *.html
 Lego.R
+=======
+>>>>>>> 0eadda405a898e85720f10a3b7e6a7dbd085fd38

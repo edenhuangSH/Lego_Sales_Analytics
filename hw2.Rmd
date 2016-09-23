@@ -42,12 +42,13 @@ lego_df = matrix(nrow = max(sum_n), ncol = length(name)) %>%
     tbl_df() %>%
     setNames(name)
 
-lego_df$'hobbies' = as.list(lego_df$'hobbies')
+lego_df['hobbies'] = as.list(lego_df['hobbies'])
 ```
 
-Create a couple of helper functions
+Create a helper function
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
+# also outputs a list if the imput is a vector with multiple elements
 rep_safe = function(x, t) {
     if (is.null(x) | is.list(x)) {
         rep(NA, t) 
@@ -76,11 +77,17 @@ for (n in name0) {
 }
 ```
 
+Some manual tidy-ing
+```{r}
+is_missing = sapply(lego_df[['hobbies']], function(x) length(x) == 0)
+lego_df[['hobbies']][which(is_missing)] = list(NA)
+lego_df['purchases'] = NULL
+```
+
 ## Task 2 - Processing the data
 
 1. What was the most common first name of purchasers? Last name?
 
-The most common first name is 
 ```{r}
 ```
 
