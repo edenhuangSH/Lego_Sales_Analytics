@@ -125,10 +125,7 @@ lego_df['purchases'] = NULL
 
 ###1. What was the most common first name of purchasers? Last name?
 
-  We use select() function to first select first name and last name from the lego       dataframe, then use distinct function to delete all the duplicates names and only     keep unique names, which are 250 names in this case. Then, we use the count and sort   finction to get the most commonly appeared first/last name on the top row, and least   common appeared name in the bottom, with their number of occurences too. Finally, we   print out the first row, which is the most common fist/last name of purchasers. 
-
-  After creating the dataframe, we can use use *dplyr* to manipulate the dataframe. We first use *select()* function to first select first name and last name from the lego dataframe, then use *distinct ()* to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the *count()* and *sort()* finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. We found out that **Jacob** and **Brown** are the most common first and last names, respectively. 
->>>>>>> 0d069ac707b56a3beaba11e1c8597c698dca56dd
+After creating the dataframe, we can use use *dplyr* to manipulate the dataframe. We first use *select()* function to first select first name and last name from the lego dataframe, then use *distinct ()* to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the *count()* and *sort()* finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. We found out that **Jacob** and **Brown** are the most common first and last names, respectively. 
 ```{r}
 lego_df %>%
     select(first_name, last_name) %>%
@@ -144,21 +141,9 @@ lego_df %>%
 ```
 
 
-<<<<<<< HEAD
-
-
-=======
-<<<<<<< HEAD
-  We use select() function to first select Name and Quatinty from the lego dataframe,   then use     group_by function to group teh table by Name. Then, use summarize        function to summarize          multiple names and quantity rows into one row, and     use arrange and desc to sort the quantity in   descending order, which is from the    most popular lego sets to teh least. Lastly, we print out    the top 5 populer lego   sets useing slice.
-
-  Again we use dplyr to manipulate the dataset. Multiple people can purchase the same   lego set.    Therefore need to group by name of the lego set and then sum up the      quantity purchased by        different customers. We arrange the summary table in a   descending order by quantity and use      slice() to select the top 5 rows. Campsite   Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty   Salon and Finn are the five    most popular lego sets we found.
-=======
->>>>>>> 2d5d4b4689bead84d27ea40328be04ed63ebeacf
 ###2. What are the five most popular lego sets based on these data?
 
 Again we use dplyr to manipulate the dataset. We use *select()* to first select Name and Quatinty from the lego dataframe. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use *slice()* to select the top 5 rows. **Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn** are the five most popular lego sets we found.
-
->>>>>>> 0d069ac707b56a3beaba11e1c8597c698dca56dd
 ```{r}
 lego_df %>%
     select(Name, Quantity) %>%
@@ -170,20 +155,11 @@ lego_df %>%
 ```
 
 
-<<<<<<< HEAD
-
-
-=======
-<<<<<<< HEAD
-  We again use dplyr on the dataframe. We use mutate() to create a new variable Spent   as a product of price and quantity. Using the similar idea in 2), we arrange Spent    in a descending order and slice the top 5 rows to get the results. Note that          after creating the new variable, we need to repipe the dataframe by selecting         less variables (replacing Spent with USPrice and    Quantity). 
-=======
->>>>>>> 2d5d4b4689bead84d27ea40328be04ed63ebeacf
 ###3. Which five customers have spent the most money so far and how much have they spent?
 
 
 We again use dplyr on the dataframe. We use *mutate()* to create a new variable Spent as a product of price and quantity. Using the similar idea in **2)**, we arrange Spent in a descending order and slice the top 5 rows to get the results. Note that after creating the new variable, we need to repipe the dataframe by selecting less variables (replacing Spent with USPrice and Quantity). 
 
->>>>>>> 0d069ac707b56a3beaba11e1c8597c698dca56dd
 ```{r}
 lego_df %>% 
     select(first_name, last_name, USPrice, Quantity) %>%
@@ -197,11 +173,7 @@ lego_df %>%
 
 ###4. Which lego theme has made the most money for lego?
 
-<<<<<<< HEAD
-  The idea of 4) is the same as 3) except for an extra grouping process                 (group_by(Theme) ) after creating the variable. Then the number of row of datasets    is reduced and we need to summarize the dataframe before ordering. Star Wars,         Ninjiago, City, Nexo Knights and Minecraft are summarized as the top 5                themes. 
-=======
 The idea of **4)** is the same as **3)** except for an extra grouping process (using *group_by(Theme)* ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. **Star Wars, Ninjiago, City, Nexo Knights and Minecraft** are summarized as the top 5 themes. 
->>>>>>> 0d069ac707b56a3beaba11e1c8597c698dca56dd
 ```{r}
 lego_df %>% 
     select(Theme, USPrice, Quantity) %>%
