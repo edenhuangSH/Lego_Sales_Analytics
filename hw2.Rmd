@@ -1,4 +1,4 @@
-Homework 1 - [Your team name here]
+Homework 1 - Team 1
 ========================================================
 
 ### Task 0 - Load the data
@@ -48,7 +48,7 @@ lego_df['hobbies'] = as.list(lego_df['hobbies'])
 Create a helper function
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
-# also outputs a list if the imput is a vector with multiple elements
+# Outputs a list if the input is a vector with multiple elements
 rep_safe = function(x, t) {
     if (is.null(x) | is.list(x)) {
         rep(NA, t) 
@@ -62,7 +62,7 @@ rep_safe = function(x, t) {
 
 Loop over and fill the data frame
 ```{r}
-name_max = 'purchases'
+name_max = names(which.max(sum_n))
 for (n in name0) {
     lego_df[[n]] = 
         sapply(sales, function(x) 
@@ -89,26 +89,60 @@ lego_df['purchases'] = NULL
 1. What was the most common first name of purchasers? Last name?
 
 ```{r}
+lego_df %>%
+    select(first_name, last_name) %>%
+    distinct() %>%
+    count(first_name, sort = TRUE) %>%
+    .[1,1]
+
+lego_df %>%
+    select(first_name, last_name) %>%
+    distinct() %>%
+    count(last_name, sort = TRUE) %>%
+    .[1,1]
 ```
 
 2. What are the five most popular lego sets based on these data?
 
 ```{r}
+lego_df %>%
+    select(Name, Quantity) %>%
+    group_by(Name) %>%
+    summarize(Quant_by_name = sum(Quantity)) %>%
+    arrange(desc(Quant_by_name)) %>%
+    slice(1:5)
 ```
 
 3. Which five customers have spent the most money so far and how much have they spent?
 
 ```{r}
+lego_df %>% 
+    select(first_name, last_name, USPrice, Quantity) %>%
+    mutate(Spent = USPrice * Quantity) %>%
+    arrange(desc(Spent)) %>%
+    select(first_name, last_name, Spent) %>%
+    slice(1:5)
 ```
 
 4. Which lego theme has made the most money for lego?
 
 ```{r}
+lego_df %>% 
+    select(first_name, last_name, Theme, USPrice, Quantity) %>%
+    mutate(Spent = USPrice * Quantity) %>%
+    group_by(Theme) %>%
+    summarise(Sum_spent = sum(Spent)) %>%
+    arrange(desc(Sum_spent)) %>%
+    slice(1:5)
 ```
 
 5. Do men or women buy more lego sets (per person) on average?
 
 ```{r}
+lego_df %>%
+    select(gender, Quantity) %>%
+    group_by(gender) %>%
+    summarise(mean(Quantity))
 ```
 
 6. What are the five most popular hobbies of lego purchasers?
@@ -119,6 +153,10 @@ lego_df['purchases'] = NULL
 7. How many total pieces have been purchased from lego by these customers?
 
 ```{r}
+lego_df %>%
+    select(Pieces, Quantity) %>%
+    transmute(Total_Pieces = Pieces * Quantity) %>%
+    summarize(sum(Total_Pieces, na.rm = TRUE))
 ```
 
 8. What state has spent the most money on legos? Hint - customer area codes may prove useful for this.
