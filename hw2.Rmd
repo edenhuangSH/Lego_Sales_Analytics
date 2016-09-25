@@ -216,11 +216,10 @@ For the harder way, we
  for(i in 1:length(sales)){
    a = c(sales[[i]]$hobbies, a)
  }
- sort(table(a), decreasing=T)[1:13] 
+  sort(table(a), decreasing=T)[1:13] 
  
 # using dplyr:
 hobbies = sapply(sales, function(x) x$hobbies) %>% unlist()
-
 data.frame(hobbies) %>%
     count(hobbies) %>%
     arrange(desc(n)) %>%
@@ -245,7 +244,9 @@ lego_df %>%
 
 ###8. What state has spent the most money on legos? Hint - customer area codes may prove useful for this.
 
-First we create a list of US area codes after some research. 
+First we create a list of US area codes after some research. We convert the area codes in lego_df from characters to numeric values Then we create a function *state()* that checks to which state each area code of the phone number is associated; the function will return NA if the area code is unindentified as a state. 
+
+Finally we use the same logic as shown in *7)* that select relevant variables, groups by state and returns the summary of the row values from the transmuted column state. 
 ```{r}
 area_code_table = list(
   Alaska = c(907),
@@ -318,7 +319,7 @@ lego_df %>%
     na.omit %>%
     transmute(state = state, purchase_amount = Quantity * USPrice) %>%
     group_by(state) %>%
-    summarise(total = sum(purchase_amount)) %>%
+    summarize(total = sum(purchase_amount)) %>%
     arrange(desc(total)) %>%
     slice(1)
 ```
