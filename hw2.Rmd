@@ -162,4 +162,11 @@ lego_df %>%
 8. What state has spent the most money on legos? Hint - customer area codes may prove useful for this.
 
 ```{r}
+area_code = list(Alaska = c(907), Alabama = c(205,251,256,334), 
+     Arkansas = c(479,501,870), Arizona = c(480, 520, 602, 623,928))
+
+phone_code = lego_df %>%
+    select(first_name, last_name, phone_number) %>%
+    distinct() %>%
+    transmute(strsplit(phone_number, '-'))
 ```
