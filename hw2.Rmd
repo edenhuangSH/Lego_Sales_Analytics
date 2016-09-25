@@ -118,6 +118,9 @@ lego_df[['hobbies']][which(is_missing)] = list(NA)
 lego_df['purchases'] = NULL  
 ```
 
+
+
+
 ## Task 2 - Processing the data
 
 ###1. What was the most common first name of purchasers? Last name?
@@ -138,6 +141,8 @@ lego_df %>%
 ```
 
 
+
+
 ###2. What are the five most popular lego sets based on these data?
 
 Again we use dplyr to manipulate the dataset. We use *select()* to first select Name and Quatinty from the lego dataframe. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use *slice()* to select the top 5 rows. **Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn** are the five most popular lego sets we found.
@@ -151,6 +156,8 @@ lego_df %>%
     slice(1:5) %>%
     select(Name)
 ```
+
+
 
 
 ###3. Which five customers have spent the most money so far and how much have they spent?
@@ -167,6 +174,8 @@ lego_df %>%
     select(first_name, last_name)
 ```
 
+
+
 ###4. Which lego theme has made the most money for lego?
 
 The idea of **4)** is the same as **3)** except for an extra grouping process (using *group_by(Theme)* ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. **Star Wars, Ninjiago, City, Nexo Knights and Minecraft** are summarized as the top 5 themes. 
@@ -179,6 +188,8 @@ lego_df %>%
     slice(1:5) %>%
     select(Theme)
 ```
+
+
 
 
 ###5. Do men or women buy more lego sets (per person) on average?
@@ -195,8 +206,18 @@ lego_df %>%
 
 ###6. What are the five most popular hobbies of lego purchasers?
 
+For the easy way, we looping over each individual's hobbies in sales data we can get a table of everyone's hbbies. After manually sorting we found that slicing the top 12 rows will give us the result. Note that all hobbies tied No.4 are considered among the five most popular hobbies. 
 
+For the harder way, we 
 ```{r}
+# easy way: using a table 
+ # All hobbies tied No.4 are considered among the five most popular hobbies.
+ a = c()
+ for(i in 1:length(sales)){
+   a = c(sales[[i]]$hobbies, a)
+ }
+ sort(table(a), decreasing=T)[1:13] 
+ 
 # using dplyr:
 hobbies = sapply(sales, function(x) x$hobbies) %>% unlist()
 
@@ -206,6 +227,8 @@ data.frame(hobbies) %>%
     slice(1:5) %>%
     select(hobbies)
 ```
+
+
 
 ###7. How many total pieces have been purchased from lego by these customers?
 
@@ -217,6 +240,7 @@ lego_df %>%
     transmute(Total_Pieces = Pieces * Quantity) %>%
     summarize(sum(Total_Pieces, na.rm = TRUE))
 ```
+
 
 
 ###8. What state has spent the most money on legos? Hint - customer area codes may prove useful for this.
