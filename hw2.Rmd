@@ -13,13 +13,14 @@ load("lego_sales.RData")
 Intialize the Data Frame
 ```{r}
 # find top level names
+#unlist make the whole list flatten, unique is to make the duplicable thing go away
 name0 = sales %>% unlist(recursive=FALSE) %>% names() %>% unique()
 
 # identify number of rows based on maxiumum number of each catagory
 sum_n = 
     sapply(name0, function(x) 
-        sapply(sales, function(y) 
-            length(y[[x]]))) %>% 
+        sapply(sales, function(y) #go 2 level deep
+            length(y[[x]]))) %>% # x reference x of name, y is reference for name
     colSums()
 
 # identify subcatagory names
@@ -34,7 +35,7 @@ cat_name =
 
 # create list of column names
 cat_name = cat_name[!(sapply(cat_name, is.null))]
-name = c(name0, unlist(cat_name, use.names = FALSE))
+name = c(name0, unlist(cat_name, use.names = FALSE))#use.names to remove "purchases"
     
 # intialize the data frame given the extents discovered above
 lego_df = matrix(nrow = max(sum_n), ncol = length(name)) %>%
@@ -49,10 +50,10 @@ Create a helper function
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
 # Outputs a list if the input is a vector with multiple elements
-rep_safe = function(x, t) {
-    if (is.null(x) | is.list(x)) {
-        rep(NA, t) 
-    } else if (length(x) != 1) {
+rep_safe = function(x, t) {           #use rep to replicate a person's name
+    if (is.null(x) | is.list(x)) {    #if we have a null, it doesn't give us a right result
+        rep(NA, t)                    #x is the input, t is the number of times to repeat
+    } else if (length(x) != 1) {      #such as hobbies have two things in one column
         list(x)[rep(1,t)]
     } else {
         rep(x, t)
@@ -62,7 +63,7 @@ rep_safe = function(x, t) {
 
 Loop over and fill the data frame
 ```{r}
-name_max = names(which.max(sum_n))
+name_max = names(which.max(sum_n))    #which.max give you where is the position of the max number
 for (n in name0) {
     lego_df[[n]] = 
         sapply(sales, function(x) 
@@ -80,8 +81,8 @@ for (n in name0) {
 Some manual tidy-ing
 ```{r}
 is_missing = sapply(lego_df[['hobbies']], function(x) length(x) == 0)
-lego_df[['hobbies']][which(is_missing)] = list(NA)
-lego_df['purchases'] = NULL
+lego_df[['hobbies']][which(is_missing)] = list(NA)   #which gives the number of each true
+lego_df['purchases'] = NULL   #delete the column purchases
 ```
 
 ## Task 2 - Processing the data
