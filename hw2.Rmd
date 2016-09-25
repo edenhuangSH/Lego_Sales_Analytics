@@ -92,6 +92,7 @@ lego_df['purchases'] = NULL
 
 1. What was the most common first name of purchasers? Last name?
 
+After creating the dataframe, we can use dplyr to manipulate the dataframe. Jacob and Brown are the most common first and last names, respectively, in the dataset. 
 ```{r}
 lego_df %>%
     select(first_name, last_name) %>%
@@ -233,7 +234,12 @@ area_code = list(
   West_Virginia = c(304),
   Wyoming = c(307) )
 
+str(lego_df %>% select(phone_number))
 
+for (i in area_code) {
+  
+  
+}
 
 
 
