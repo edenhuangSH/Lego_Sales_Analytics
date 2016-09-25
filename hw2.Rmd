@@ -92,7 +92,7 @@ lego_df['purchases'] = NULL
 
 1. What was the most common first name of purchasers? Last name?
 
-After creating the dataframe, we can use dplyr to manipulate the dataframe. We count the unique names in the dataset by distinct () and found out that Jacob and Brown are the most common first and last names, respectively. 
+After creating the dataframe, we can use dplyr to manipulate the dataframe. We count the unique names in the dataset by *distinct ()* and found out that Jacob and Brown are the most common first and last names, respectively. 
 ```{r}
 lego_df %>%
     select(first_name, last_name) %>%
@@ -109,7 +109,7 @@ lego_df %>%
 
 2. What are the five most popular lego sets based on these data?
 
-Again we use dplyr to manipulate the dataset. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use slice() to select the top 5 rows. Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn are the five most popular lego sets we found.
+Again we use dplyr to manipulate the dataset. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use *slice()* to select the top 5 rows. **Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn** are the five most popular lego sets we found.
 ```{r}
 lego_df %>%
     select(Name, Quantity) %>%
@@ -121,7 +121,7 @@ lego_df %>%
 
 3. Which five customers have spent the most money so far and how much have they spent?
 
-We again use dplyr on the dataframe. We use mutate() to create a new variable Spent as a product of price and quantity. Using the similar idea in 2), we arrange Spent in a descending order and slice the top 5 rows to get the results. Note that after creating the new variable, we need to repipe the dataframe by selecting less variables (replacing Spent with USPrice and Quantity). 
+We again use dplyr on the dataframe. We use *mutate()* to create a new variable Spent as a product of price and quantity. Using the similar idea in **2)**, we arrange Spent in a descending order and slice the top 5 rows to get the results. Note that after creating the new variable, we need to repipe the dataframe by selecting less variables (replacing Spent with USPrice and Quantity). 
 ```{r}
 lego_df %>% 
     select(first_name, last_name, USPrice, Quantity) %>%
@@ -133,7 +133,7 @@ lego_df %>%
 
 4. Which lego theme has made the most money for lego?
 
-The idea of 4) is the same as 3) except for an extra grouping process (group_by(Theme) ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. Star Wars, Ninjiago, City, Nexo Knights and Minecraft are summarized as the top 5 themes. 
+The idea of **4)** is the same as **3)** except for an extra grouping process (using *group_by(Theme)* ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. **Star Wars, Ninjiago, City, Nexo Knights and Minecraft** are summarized as the top 5 themes. 
 ```{r}
  lego_df %>% 
      select(first_name, last_name, Theme, USPrice, Quantity) %>%
