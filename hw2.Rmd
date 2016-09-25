@@ -24,16 +24,21 @@ load("lego_sales.RData")
     
 ```{r}
 # find top level names
+<<<<<<< HEAD
+#unlist make the whole list flatten, unique is to make the duplicable thing go away
+name0 = sales %>% unlist(recursive=FALSE) %>% names() %>% unique()
+=======
 name0 = sales %>% 
     unlist(recursive=FALSE) %>% 
     names() %>% 
     unique()
+>>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
 
 # identify number of rows based on maxiumum number of each catagory
 sum_n = 
     sapply(name0, function(x) 
-        sapply(sales, function(y) 
-            length(y[[x]]))) %>% 
+        sapply(sales, function(y) #go 2 level deep
+            length(y[[x]]))) %>% # x reference x of name, y is reference for name
     colSums()
 
 # identify subcatagory names
@@ -48,7 +53,11 @@ cat_name =
 
 # create list of column names
 cat_name = cat_name[!(sapply(cat_name, is.null))]
+<<<<<<< HEAD
+name = c(name0, unlist(cat_name, use.names = FALSE))#use.names to remove "purchases"
+=======
 col_name = c(name0, unlist(cat_name, use.names = FALSE))
+>>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
     
 # intialize the data frame given the extents discovered above
 lego_df = matrix(nrow = max(sum_n), ncol = length(col_name)) %>%
@@ -70,10 +79,10 @@ lego_df = matrix(nrow = max(sum_n), ncol = length(col_name)) %>%
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
 # Outputs a list if the input is a vector with multiple elements
-rep_safe = function(x, t) {
-    if (is.null(x) | is.list(x)) {
-        rep(NA, t) 
-    } else if (length(x) != 1) {
+rep_safe = function(x, t) {           #use rep to replicate a person's name
+    if (is.null(x) | is.list(x)) {    #if we have a null, it doesn't give us a right result
+        rep(NA, t)                    #x is the input, t is the number of times to repeat
+    } else if (length(x) != 1) {      #such as hobbies have two things in one column
         list(x)[rep(1,t)]
     } else {
         rep(x, t)
@@ -88,6 +97,7 @@ rep_safe = function(x, t) {
 * Because the subcatagory names are unique, we do not apply `rep`
 
 ```{r}
+name_max = names(which.max(sum_n))    #which.max give you where is the position of the max number
 for (n in name0) {
     lego_df[[n]] = 
         sapply(sales, function(x) 
@@ -111,15 +121,17 @@ for (n in name0) {
 
 ```{r}
 is_missing = sapply(lego_df[['hobbies']], function(x) length(x) == 0)
-lego_df[['hobbies']][which(is_missing)] = list(NA)
-lego_df['purchases'] = NULL
+lego_df[['hobbies']][which(is_missing)] = list(NA)   #which gives the number of each true
+lego_df['purchases'] = NULL   #delete the column purchases
 ```
 
 
 
 ## Task 2 - Processing the data
 
+
 1. What was the most common first name of purchasers? Last name?
+We use select() function to first select first name and last name from the lego dataframe, then use distinct function to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the count and sort finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. 
 
 After creating the dataframe, we can use dplyr to manipulate the dataframe. We count the unique names in the dataset by distinct () and found out that Jacob and Brown are the most common first and last names, respectively. 
 ```{r}
@@ -137,6 +149,7 @@ lego_df %>%
 ```
 
 2. What are the five most popular lego sets based on these data?
+We use select() function to first select Name and Quatinty from the lego dataframe, then use group_by function to group teh table by Name. Then, use summarize function to summarize multiple names and quantity rows into one row, and use arrange and desc to sort the quantity in descending order, which is from the most popular lego sets to teh least. Lastly, we print out the top 5 populer lego sets useing slice.
 
 Again we use dplyr to manipulate the dataset. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use slice() to select the top 5 rows. Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn are the five most popular lego sets we found.
 ```{r}
@@ -200,6 +213,7 @@ sort(table(a), decreasing=T)[1:13]
 
 
 6. What are the five most popular hobbies of lego purchasers?
+>>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
 
 Looping over each individual's hobbies in sales data we can get a table of everyone's hbbies. After manually sorting we found that slicing the top 12 rows will give us the result. Note that all hobbies tied No.4 are considered among the five most popular hobbies. 
 ```{r}
