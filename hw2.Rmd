@@ -10,16 +10,35 @@ load("lego_sales.RData")
 
 ### Task 1 - Tidying the data
 
-Intialize the Data Frame
+**Intialize the Data Frame:**
+
+* First find the top level names by unlisting the sales object and looking at the unique top level names `(gender, first_name, hobbies, etc)`.
+    
+* Next identify we want to the subcatagory names for each catagory name. In this case, only purchases has a subcatagory name. Thankfully our nested list only two deep (no subsubcatagory names). We use a similar technique to the top level names except we want to know the length.
+    
+* The top level and second level names becomes the number of columns.
+    
+* Next we want to find the number of rows for our data frame. For each top level catagory how many elements is there? We use a similar technique in finding the top level names, except we loop through every top level catagory. In our case, the purchase catagory has the most elements so we choose that to be the number of rows.
+    
+* Finally we intialize the data frame with the number of rows and columns we discovered above. 
+    
 ```{r}
 # find top level names
+<<<<<<< HEAD
+#unlist make the whole list flatten, unique is to make the duplicable thing go away
 name0 = sales %>% unlist(recursive=FALSE) %>% names() %>% unique()
+=======
+name0 = sales %>% 
+    unlist(recursive=FALSE) %>% 
+    names() %>% 
+    unique()
+>>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
 
 # identify number of rows based on maxiumum number of each catagory
 sum_n = 
     sapply(name0, function(x) 
-        sapply(sales, function(y) 
-            length(y[[x]]))) %>% 
+        sapply(sales, function(y) #go 2 level deep
+            length(y[[x]]))) %>% # x reference x of name, y is reference for name
     colSums()
 
 # identify subcatagory names
@@ -34,26 +53,36 @@ cat_name =
 
 # create list of column names
 cat_name = cat_name[!(sapply(cat_name, is.null))]
-name = c(name0, unlist(cat_name, use.names = FALSE))
+<<<<<<< HEAD
+name = c(name0, unlist(cat_name, use.names = FALSE))#use.names to remove "purchases"
+=======
+col_name = c(name0, unlist(cat_name, use.names = FALSE))
+>>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
     
 # intialize the data frame given the extents discovered above
-lego_df = matrix(nrow = max(sum_n), ncol = length(name)) %>%
+lego_df = matrix(nrow = max(sum_n), ncol = length(col_name)) %>%
     data.frame() %>% 
     tbl_df() %>%
-    setNames(name)
-
-# hobbies is a special case
-lego_df['hobbies'] = as.list(lego_df['hobbies'])
+    setNames(col_name)
 ```
 
-Create a helper function
+**Creating a helper function**
+
+* The way we set up our data frame, each row contains a unique lego set purchase. Other information will be duplicated by the number of purchases made. For example if `John Smith` purchased three different lego sets, his name would show up in three different rows.
+
+* However, when looping over the list values that don't appear return `NULL`. The R function `rep` ingores `NULL`; we would rather have it return a placeholder `NA` instead.
+
+* Finally in the case of hobby, where there a person can have multiple hobbies, we want the function to return a list instead.
+
+* We wrote a helper function `rep_safe` to handle these cases that rep fails. In this way we ensure that the return value always has the same length and `t` times the length of `x`.
+
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
 # Outputs a list if the input is a vector with multiple elements
-rep_safe = function(x, t) {
-    if (is.null(x) | is.list(x)) {
-        rep(NA, t) 
-    } else if (length(x) != 1) {
+rep_safe = function(x, t) {           #use rep to replicate a person's name
+    if (is.null(x) | is.list(x)) {    #if we have a null, it doesn't give us a right result
+        rep(NA, t)                    #x is the input, t is the number of times to repeat
+    } else if (length(x) != 1) {      #such as hobbies have two things in one column
         list(x)[rep(1,t)]
     } else {
         rep(x, t)
@@ -61,13 +90,18 @@ rep_safe = function(x, t) {
 }
 ```
 
-Loop over and fill the data frame
+**Loop over and fill the data frame**
+
+* We use our `rep_safe` function that we defined from above to loop over the catagory and subcatagory names using nested `sapply` statements. We replicate the top level rows by the corresponding number of purchases. 
+
+* Because the subcatagory names are unique, we do not apply `rep`
+
 ```{r}
-name_max = names(which.max(sum_n))
+name_max = names(which.max(sum_n))    #which.max give you where is the position of the max number
 for (n in name0) {
     lego_df[[n]] = 
         sapply(sales, function(x) 
-            rep_safe(x[[n]], length(x[[name_max]]))) %>%
+            rep_safe(x[[n]], length(x[['purchases']]))) %>%
         unlist(recursive=FALSE)
     for (c in cat_name[[n]]) {
         lego_df[[c]] =
@@ -78,19 +112,30 @@ for (n in name0) {
 }
 ```
 
-Finally we need to do some manual tidy-ing: 1) in 'hobbies', replace "length = 0"" with "NA"
-2) delete the column "purchases" since all the information in the purchases are already in the other columns. 
+
+**Some manual tidy-ing**
+
+* A few things still need to be cleaned up. Hobbies contains `character(0)` values, but we would rather have `NA` placeholder values. We find the elements in `hobbies` with length `0` and replace them with an `NA`.
+
+* The purchases column is empty because it doesn't contain any information outside of its subcatagory values. We delete it. 
+
 ```{r}
 is_missing = sapply(lego_df[['hobbies']], function(x) length(x) == 0)
-lego_df[['hobbies']][which(is_missing)] = list(NA)
-lego_df['purchases'] = NULL
+lego_df[['hobbies']][which(is_missing)] = list(NA)   #which gives the number of each true
+lego_df['purchases'] = NULL   #delete the column purchases
 ```
 
 
 
 ## Task 2 - Processing the data
 
+<<<<<<< HEAD
 ###1. What was the most common first name of purchasers? Last name?
+=======
+
+1. What was the most common first name of purchasers? Last name?
+We use select() function to first select first name and last name from the lego dataframe, then use distinct function to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the count and sort finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. 
+>>>>>>> 861ad377d27b5a182ab440e930bf5ae1dec36afc
 
 After creating the dataframe, we can use dplyr to manipulate the dataframe. We count the unique names in the dataset by *distinct ()* and found out that **Jacob** and **Brown** are the most common first and last names, respectively. 
 ```{r}
@@ -107,7 +152,12 @@ lego_df %>%
     .[1,1]
 ```
 
+<<<<<<< HEAD
 ###2. What are the five most popular lego sets based on these data?
+=======
+2. What are the five most popular lego sets based on these data?
+We use select() function to first select Name and Quatinty from the lego dataframe, then use group_by function to group teh table by Name. Then, use summarize function to summarize multiple names and quantity rows into one row, and use arrange and desc to sort the quantity in descending order, which is from the most popular lego sets to teh least. Lastly, we print out the top 5 populer lego sets useing slice.
+>>>>>>> 861ad377d27b5a182ab440e930bf5ae1dec36afc
 
 Again we use dplyr to manipulate the dataset. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use *slice()* to select the top 5 rows. **Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn** are the five most popular lego sets we found.
 ```{r}
@@ -116,7 +166,8 @@ lego_df %>%
     group_by(Name) %>%
     summarize(Quant_by_name = sum(Quantity)) %>%
     arrange(desc(Quant_by_name)) %>%
-    slice(1:5)
+    slice(1:5) %>%
+    select(Name)
 ```
 
 ###3. Which five customers have spent the most money so far and how much have they spent?
@@ -127,21 +178,21 @@ lego_df %>%
     select(first_name, last_name, USPrice, Quantity) %>%
     mutate(Spent = USPrice * Quantity) %>%
     arrange(desc(Spent)) %>%
-    select(first_name, last_name, Spent) %>%
-    slice(1:5)
+    slice(1:5) %>%
+    select(first_name, last_name)
 ```
 
 ###4. Which lego theme has made the most money for lego?
 
 The idea of **4)** is the same as **3)** except for an extra grouping process (using *group_by(Theme)* ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. **Star Wars, Ninjiago, City, Nexo Knights and Minecraft** are summarized as the top 5 themes. 
 ```{r}
- lego_df %>% 
-     select(first_name, last_name, Theme, USPrice, Quantity) %>%
-     mutate(Spent = USPrice * Quantity) %>%
-     group_by(Theme) %>%
-     summarize(Sum_spent = sum(Spent)) %>%
-     arrange(desc(Sum_spent)) %>%
-     slice(1:5)
+lego_df %>% 
+    select(Theme, USPrice, Quantity) %>%
+    group_by(Theme) %>%
+    summarise(Sum_spent = sum(USPrice * Quantity)) %>%
+    arrange(desc(Sum_spent)) %>%
+    slice(1:5) %>%
+    select(Theme)
 ```
 
 ###5. Do men or women buy more lego sets (per person) on average?
@@ -154,23 +205,41 @@ lego_df %>%
     summarize(mean(Quantity))
 ```
 
+<<<<<<< HEAD
 
 
 ###6. What are the five most popular hobbies of lego purchasers?
 
 Looping over each individual's *hobbies* in *sales* we can get a table of everyone's hbbies. After manually sorting we found that slicing the top 12 rows will give us the result. Note that all hobbies tied No.4 are considered among the five most popular hobbies. 
+=======
+6. What are the five most popular hobbies of lego purchasers?
+
+>>>>>>> 861ad377d27b5a182ab440e930bf5ae1dec36afc
 ```{r}
 # easy way: using a table 
+# All hobbies tied No.4 are considered among the five most popular hobbies.
 a = c()
 for(i in 1:length(sales)){
   a = c(sales[[i]]$hobbies, a)
 }
 sort(table(a), decreasing=T)[1:13] 
 
-
-
 # using dplyr:
+```
 
+
+6. What are the five most popular hobbies of lego purchasers?
+>>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
+
+Looping over each individual's hobbies in sales data we can get a table of everyone's hbbies. After manually sorting we found that slicing the top 12 rows will give us the result. Note that all hobbies tied No.4 are considered among the five most popular hobbies. 
+```{r}
+hobbies = sapply(sales, function(x) x$hobbies) %>% unlist()
+
+data.frame(hobbies) %>%
+    count(hobbies) %>%
+    arrange(desc(n)) %>%
+    slice(1:5) %>%
+    select(hobbies)
 ```
 
 ###7. How many total pieces have been purchased from lego by these customers?
@@ -189,7 +258,7 @@ lego_df %>%
 
 First we create a list of US area codes after some research. 
 ```{r}
-area_code = list(
+area_code_table = list(
   Alaska = c(907),
   Alabama = c(205, 251, 256, 334),
   Arkansas = c(479, 501, 870),
@@ -242,6 +311,27 @@ area_code = list(
   West_Virginia = c(304),
   Wyoming = c(307) )
 
-str(lego_df %>% select(phone_number))
+lego_df = mutate(lego_df, "area_code" = as.numeric(substr(lego_df$phone_number, 1, 3)))
 
+state = function(ac) {
+  for (i in 1:51) {
+    if (ac %in% area_code_table[[i]]) {
+      return (names(area_code_table[i]))
+    }
+  }
+  return (NA)
+}
+
+lego_df$state = sapply(lego_df$area_code, state)
+
+lego_df %>%
+    select(state, Quantity, USPrice) %>%
+    na.omit %>%
+    transmute(state = state, purchase_amount = Quantity * USPrice) %>%
+    group_by(state) %>%
+    summarise(total = sum(purchase_amount)) %>%
+    arrange(desc(total)) %>%
+    slice(1)
 ```
+
+
