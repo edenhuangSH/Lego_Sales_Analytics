@@ -148,12 +148,11 @@ lego_df %>%
 6. What are the five most popular hobbies of lego purchasers?
 
 ```{r}
-sapply(sales,function(x){x$hobbies}) %>%
-    unlist() %>% 
-    table() %>%
-    as.data.frame() %>%
-    arrange(desc(Freq)) %>%
-    slice(1:12)
+a = c()
+for(i in 1:length(sales)){
+a = c(sales[[i]]$hobbies, a)
+}
+sort(table(a), decreasing=T)[1:12]
 ```
 
 7. How many total pieces have been purchased from lego by these customers?
@@ -169,3 +168,5 @@ lego_df %>%
 
 ```{r}
 ```
+
+
