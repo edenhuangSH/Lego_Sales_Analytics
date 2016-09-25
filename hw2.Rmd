@@ -150,8 +150,7 @@ lego_df %>%
 ```{r}
 a = c()
 for(i in 1:length(sales)){
-hobbies[[i]] = sales[[i]]$hobbies
-a = c(hobbies[[i]], a)
+a = c(sales[[i]]$hobbies, a)
 }
 sort(table(a), decreasing=T)[1:13]
 ```
