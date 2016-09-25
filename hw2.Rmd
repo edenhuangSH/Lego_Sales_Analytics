@@ -165,7 +165,6 @@ lego_df %>%
 
 The idea of 4) is the same as 3) except for an extra grouping process (group_by(Theme) ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. Star Wars, Ninjiago, City, Nexo Knights and Minecraft are summarized as the top 5 themes. 
 ```{r}
-<<<<<<< HEAD
 lego_df %>% 
     select(Theme, USPrice, Quantity) %>%
     group_by(Theme) %>%
@@ -185,7 +184,6 @@ lego_df %>%
     summarize(mean(Quantity))
 ```
 
-<<<<<<< HEAD
 6. What are the five most popular hobbies of lego purchasers?
 
 ```{r}
@@ -198,8 +196,7 @@ for(i in 1:length(sales)){
 sort(table(a), decreasing=T)[1:13] 
 
 # using dplyr:
-
-=======
+```
 
 
 6. What are the five most popular hobbies of lego purchasers?
@@ -213,7 +210,6 @@ data.frame(hobbies) %>%
     arrange(desc(n)) %>%
     slice(1:5) %>%
     select(hobbies)
->>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
 ```
 
 7. How many total pieces have been purchased from lego by these customers?
