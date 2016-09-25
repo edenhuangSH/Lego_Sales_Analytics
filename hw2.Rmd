@@ -131,11 +131,10 @@ lego_df['purchases'] = NULL   #delete the column purchases
 
 
 ## Task 2 - Processing the data
-##write up for Task 2
-# Problem 1 
-# We use select() function to first select first name and last name from the lego dataframe, then use distinct function to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the count and sort finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. 
+
 
 1. What was the most common first name of purchasers? Last name?
+We use select() function to first select first name and last name from the lego dataframe, then use distinct function to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the count and sort finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. 
 
 After creating the dataframe, we can use dplyr to manipulate the dataframe. We count the unique names in the dataset by distinct () and found out that Jacob and Brown are the most common first and last names, respectively. 
 ```{r}
@@ -153,8 +152,7 @@ lego_df %>%
 ```
 
 2. What are the five most popular lego sets based on these data?
-# Problem 2
-# We use select() function to first select Name and Quatinty from the lego dataframe, then use group_by function to group teh table by Name. Then, use summarize function to summarize multiple names and quantity rows into one row, and use arrange and desc to sort the quantity in descending order, which is from the most popular lego sets to teh least. Lastly, we print out the top 5 populer lego sets useing slice.
+We use select() function to first select Name and Quatinty from the lego dataframe, then use group_by function to group teh table by Name. Then, use summarize function to summarize multiple names and quantity rows into one row, and use arrange and desc to sort the quantity in descending order, which is from the most popular lego sets to teh least. Lastly, we print out the top 5 populer lego sets useing slice.
 
 Again we use dplyr to manipulate the dataset. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use slice() to select the top 5 rows. Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn are the five most popular lego sets we found.
 ```{r}
