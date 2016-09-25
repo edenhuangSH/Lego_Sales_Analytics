@@ -90,6 +90,9 @@ lego_df['purchases'] = NULL   #delete the column purchases
 
 
 ## Task 2 - Processing the data
+##write up for Task 2
+# Problem 1 
+# We use select() function to first select first name and last name from the lego dataframe, then use distinct function to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the count and sort finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. 
 
 1. What was the most common first name of purchasers? Last name?
 
@@ -108,6 +111,8 @@ lego_df %>%
 ```
 
 2. What are the five most popular lego sets based on these data?
+# Problem 2
+# We use select() function to first select Name and Quatinty from the lego dataframe, then use group_by function to group teh table by Name. Then, use summarize function to summarize multiple names and quantity rows into one row, and use arrange and desc to sort the quantity in descending order, which is from the most popular lego sets to teh least. Lastly, we print out the top 5 populer lego sets useing slice.
 
 ```{r}
 lego_df %>%
@@ -160,8 +165,6 @@ for(i in 1:length(sales)){
   a = c(sales[[i]]$hobbies, a)
 }
 sort(table(a), decreasing=T)[1:13] 
-
-
 
 # using dplyr:
 
