@@ -10,10 +10,24 @@ load("lego_sales.RData")
 
 ### Task 1 - Tidying the data
 
-Intialize the Data Frame
+**Intialize the Data Frame:**
+
+* First find the top level names by unlisting the sales object and looking at the unique top level names `(gender, first_name, hobbies, etc)`.
+    
+* Next identify we want to the subcatagory names for each catagory name. In this case, only purchases has a subcatagory name. Thankfully our nested list only two deep (no subsubcatagory names). We use a similar technique to the top level names except we want to know the length.
+    
+* The top level and second level names becomes the number of columns.
+    
+* Next we want to find the number of rows for our data frame. For each top level catagory how many elements is there? We use a similar technique in finding the top level names, except we loop through every top level catagory. In our case, the purchase catagory has the most elements so we choose that to be the number of rows.
+    
+* Finally we intialize the data frame with the number of rows and columns we discovered above. 
+    
 ```{r}
 # find top level names
-name0 = sales %>% unlist(recursive=FALSE) %>% names() %>% unique()
+name0 = sales %>% 
+    unlist(recursive=FALSE) %>% 
+    names() %>% 
+    unique()
 
 # identify number of rows based on maxiumum number of each catagory
 sum_n = 
@@ -34,18 +48,25 @@ cat_name =
 
 # create list of column names
 cat_name = cat_name[!(sapply(cat_name, is.null))]
-name = c(name0, unlist(cat_name, use.names = FALSE))
+col_name = c(name0, unlist(cat_name, use.names = FALSE))
     
 # intialize the data frame given the extents discovered above
-lego_df = matrix(nrow = max(sum_n), ncol = length(name)) %>%
+lego_df = matrix(nrow = max(sum_n), ncol = length(col_name)) %>%
     data.frame() %>% 
     tbl_df() %>%
-    setNames(name)
-
-lego_df['hobbies'] = as.list(lego_df['hobbies'])
+    setNames(col_name)
 ```
 
-Create a helper function
+**Creating a helper function**
+
+* The way we set up our data frame, each row contains a unique lego set purchase. Other information will be duplicated by the number of purchases made. For example if `John Smith` purchased three different lego sets, his name would show up in three different rows.
+
+* However, when looping over the list values that don't appear return `NULL`. The R function `rep` ingores `NULL`; we would rather have it return a placeholder `NA` instead.
+
+* Finally in the case of hobby, where there a person can have multiple hobbies, we want the function to return a list instead.
+
+* We wrote a helper function `rep_safe` to handle these cases that rep fails. In this way we ensure that the return value always has the same length and `t` times the length of `x`.
+
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
 # Outputs a list if the input is a vector with multiple elements
@@ -60,13 +81,17 @@ rep_safe = function(x, t) {
 }
 ```
 
-Loop over and fill the data frame
+**Loop over and fill the data frame**
+
+* We use our `rep_safe` function that we defined from above to loop over the catagory and subcatagory names using nested `sapply` statements. We replicate the top level rows by the corresponding number of purchases. 
+
+* Because the subcatagory names are unique, we do not apply `rep`
+
 ```{r}
-name_max = names(which.max(sum_n))
 for (n in name0) {
     lego_df[[n]] = 
         sapply(sales, function(x) 
-            rep_safe(x[[n]], length(x[[name_max]]))) %>%
+            rep_safe(x[[n]], length(x[['purchases']]))) %>%
         unlist(recursive=FALSE)
     for (c in cat_name[[n]]) {
         lego_df[[c]] =
@@ -77,7 +102,12 @@ for (n in name0) {
 }
 ```
 
-Some manual tidy-ing
+**Some manual tidy-ing**
+
+* A few things still need to be cleaned up. Hobbies contains `character(0)` values, but we would rather have `NA` placeholder values. We find the elements in `hobbies` with length `0` and replace them with an `NA`.
+
+* The purchases column is empty because it doesn't contain any information outside of its subcatagory values. We delete it. 
+
 ```{r}
 is_missing = sapply(lego_df[['hobbies']], function(x) length(x) == 0)
 lego_df[['hobbies']][which(is_missing)] = list(NA)
@@ -110,7 +140,8 @@ lego_df %>%
     group_by(Name) %>%
     summarize(Quant_by_name = sum(Quantity)) %>%
     arrange(desc(Quant_by_name)) %>%
-    slice(1:5)
+    slice(1:5) %>%
+    select(Name)
 ```
 
 3. Which five customers have spent the most money so far and how much have they spent?
@@ -120,20 +151,20 @@ lego_df %>%
     select(first_name, last_name, USPrice, Quantity) %>%
     mutate(Spent = USPrice * Quantity) %>%
     arrange(desc(Spent)) %>%
-    select(first_name, last_name, Spent) %>%
-    slice(1:5)
+    slice(1:5) %>%
+    select(first_name, last_name)
 ```
 
 4. Which lego theme has made the most money for lego?
 
 ```{r}
 lego_df %>% 
-    select(first_name, last_name, Theme, USPrice, Quantity) %>%
-    mutate(Spent = USPrice * Quantity) %>%
+    select(Theme, USPrice, Quantity) %>%
     group_by(Theme) %>%
-    summarise(Sum_spent = sum(Spent)) %>%
+    summarise(Sum_spent = sum(USPrice * Quantity)) %>%
     arrange(desc(Sum_spent)) %>%
-    slice(1:5)
+    slice(1:5) %>%
+    select(Theme)
 ```
 
 5. Do men or women buy more lego sets (per person) on average?
@@ -148,11 +179,13 @@ lego_df %>%
 6. What are the five most popular hobbies of lego purchasers?
 
 ```{r}
-a = sapply(sales, function(x) x$hobbies) %>% unlist()
+hobbies = sapply(sales, function(x) x$hobbies) %>% unlist()
 
-data.frame(a) %>%
-    count(a) %>%
-    arrange(desc(n))
+data.frame(hobbies) %>%
+    count(hobbies) %>%
+    arrange(desc(n)) %>%
+    slice(1:5) %>%
+    select(hobbies)
 ```
 
 7. How many total pieces have been purchased from lego by these customers?
@@ -167,11 +200,8 @@ lego_df %>%
 8. What state has spent the most money on legos? Hint - customer area codes may prove useful for this.
 
 ```{r}
-area_code = list(Alaska = c(907), Alabama = c(205,251,256,334), 
-     Arkansas = c(479,501,870), Arizona = c(480, 520, 602, 623,928))
-
 phone_code = lego_df %>%
-    select(first_name, last_name, phone_number) %>%
-    distinct() %>%
-    transmute(strsplit(phone_number, '-'))
+    select(phone_number, USPrice, Quantity) %>%
+    transmute(area_code = substring(phone_number, 1,3)) %>%
+    group_by(area_code)
 ```
