@@ -121,6 +121,7 @@ lego_df['purchases'] = NULL
 
 1. What was the most common first name of purchasers? Last name?
 
+After creating the dataframe, we can use dplyr to manipulate the dataframe. We count the unique names in the dataset by distinct () and found out that Jacob and Brown are the most common first and last names, respectively. 
 ```{r}
 lego_df %>%
     select(first_name, last_name) %>%
@@ -137,6 +138,7 @@ lego_df %>%
 
 2. What are the five most popular lego sets based on these data?
 
+Again we use dplyr to manipulate the dataset. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use slice() to select the top 5 rows. Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn are the five most popular lego sets we found.
 ```{r}
 lego_df %>%
     select(Name, Quantity) %>%
@@ -149,6 +151,7 @@ lego_df %>%
 
 3. Which five customers have spent the most money so far and how much have they spent?
 
+We again use dplyr on the dataframe. We use mutate() to create a new variable Spent as a product of price and quantity. Using the similar idea in 2), we arrange Spent in a descending order and slice the top 5 rows to get the results. Note that after creating the new variable, we need to repipe the dataframe by selecting less variables (replacing Spent with USPrice and Quantity). 
 ```{r}
 lego_df %>% 
     select(first_name, last_name, USPrice, Quantity) %>%
@@ -160,7 +163,9 @@ lego_df %>%
 
 4. Which lego theme has made the most money for lego?
 
+The idea of 4) is the same as 3) except for an extra grouping process (group_by(Theme) ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. Star Wars, Ninjiago, City, Nexo Knights and Minecraft are summarized as the top 5 themes. 
 ```{r}
+<<<<<<< HEAD
 lego_df %>% 
     select(Theme, USPrice, Quantity) %>%
     group_by(Theme) %>%
@@ -172,15 +177,19 @@ lego_df %>%
 
 5. Do men or women buy more lego sets (per person) on average?
 
+Grouping by gender we found that male on average buy slightly more lego sets than female. However the difference is almost negligible and more tests should be conducted.
 ```{r}
 lego_df %>%
     select(gender, Quantity) %>%
     group_by(gender) %>%
-    summarise(mean(Quantity))
+    summarize(mean(Quantity))
 ```
+
+
 
 6. What are the five most popular hobbies of lego purchasers?
 
+Looping over each individual's hobbies in sales data we can get a table of everyone's hbbies. After manually sorting we found that slicing the top 12 rows will give us the result. Note that all hobbies tied No.4 are considered among the five most popular hobbies. 
 ```{r}
 hobbies = sapply(sales, function(x) x$hobbies) %>% unlist()
 
@@ -255,5 +264,4 @@ area_code = list(
   Wisconsin = c(262, 414, 608, 715, 920),
   West_Virginia = c(304),
   Wyoming = c(307) )
-
 ```
