@@ -24,15 +24,12 @@ load("lego_sales.RData")
     
 ```{r}
 # find top level names
-<<<<<<< HEAD
 #unlist make the whole list flatten, unique is to make the duplicable thing go away
 name0 = sales %>% unlist(recursive=FALSE) %>% names() %>% unique()
-=======
 name0 = sales %>% 
     unlist(recursive=FALSE) %>% 
     names() %>% 
     unique()
->>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
 
 # identify number of rows based on maxiumum number of each catagory
 sum_n = 
@@ -53,11 +50,8 @@ cat_name =
 
 # create list of column names
 cat_name = cat_name[!(sapply(cat_name, is.null))]
-<<<<<<< HEAD
 name = c(name0, unlist(cat_name, use.names = FALSE))#use.names to remove "purchases"
-=======
 col_name = c(name0, unlist(cat_name, use.names = FALSE))
->>>>>>> 77297938f79ffbec09f63ed178bf5b4f27e9f326
     
 # intialize the data frame given the extents discovered above
 lego_df = matrix(nrow = max(sum_n), ncol = length(col_name)) %>%
