@@ -42,6 +42,7 @@ lego_df = matrix(nrow = max(sum_n), ncol = length(name)) %>%
     tbl_df() %>%
     setNames(name)
 
+# hobbies is a special case
 lego_df['hobbies'] = as.list(lego_df['hobbies'])
 ```
 
@@ -71,18 +72,21 @@ for (n in name0) {
     for (c in cat_name[[n]]) {
         lego_df[[c]] =
             sapply(sales, function(x) 
-                sapply(x[[n]], function(y) y[[c]]))  %>%
+                sapply(x[[n]], function(y) y[[c]]))  %>% 
             unlist()
     }
 }
 ```
 
-Some manual tidy-ing
+Finally we need to do some manual tidy-ing: 1) in 'hobbies', replace "length = 0"" with "NA"
+2) delete the column "purchases" since all the information in the purchases are already in the other columns. 
 ```{r}
 is_missing = sapply(lego_df[['hobbies']], function(x) length(x) == 0)
 lego_df[['hobbies']][which(is_missing)] = list(NA)
 lego_df['purchases'] = NULL
 ```
+
+
 
 ## Task 2 - Processing the data
 
@@ -148,11 +152,20 @@ lego_df %>%
 6. What are the five most popular hobbies of lego purchasers?
 
 ```{r}
+# easy way: using a table 
+# All hobbies tied No.4 are considered among the five most popular hobbies.
 a = c()
 for(i in 1:length(sales)){
-a = c(sales[[i]]$hobbies, a)
+  a = c(sales[[i]]$hobbies, a)
 }
 sort(table(a), decreasing=T)[1:13]
+type()
+
+
+# using dplyr:
+
+
+
 ```
 
 7. How many total pieces have been purchased from lego by these customers?
@@ -167,4 +180,8 @@ lego_df %>%
 8. What state has spent the most money on legos? Hint - customer area codes may prove useful for this.
 
 ```{r}
+
+
+
+
 ```
