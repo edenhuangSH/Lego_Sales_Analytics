@@ -125,64 +125,62 @@ The final result is a data frame with `r nrow(lego_df)` rows and `r ncol(lego_df
 
 ###1. What was the most common first name of purchasers? Last name?
 
-After creating the dataframe, we used `dplyr` to manipulate the dataframe. We first use `select()` to keep just first and last names, then use `distinct ()` to keep only the 250 unique names in this case. Then, we use the `count()` and `sort()` function to get the most common first/last name at the top row (ties broken by alphabetical order). We found out that **Jacob** and **Brown** are the most common first and last names, respectively. 
+After creating the dataframe, we used `dplyr` to manipulate the dataframe. We first use `select()` to keep just first and last names, then use `distinct ()` to keep only the 250 unique names in this case. Then, we use the `count()` and `sort()` function to get the most common first/last name at the top row (ties broken by alphabetical order).
 ```{r}
-lego_df %>%
+l_name = lego_df %>%
     select(first_name, last_name) %>%
     distinct() %>%
     count(first_name, sort = TRUE) %>%
     .[1,1]
 
-lego_df %>%
+f_name = lego_df %>%
     select(first_name, last_name) %>%
     distinct() %>%
     count(last_name, sort = TRUE) %>%
     .[1,1]
 ```
-
+We found out that **`r f_name[1]`** and **`r l_name[1]`** are the most common first and last names, respectively. 
 
 ###2. What are the five most popular lego sets based on these data?
 
-Again we use dplyr to manipulate the dataset. We use `select()` to first select `Name` and `Quatinty` from the lego dataframe. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use `slice()` to select the top 5 rows (once again ties broken by alphabetical order of names). **Campsite Scrapbook, Ninjago Party Set, Arctic, Daisy's Beauty Salon and Finn** are the five most popular lego sets we found.
+Again we use dplyr to manipulate the dataset. We use `select()` to first select `Name` and `Quantity` from the lego dataframe. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use `slice()` to select the top 5 rows (once again ties broken by alphabetical order of names).
 ```{r}
-lego_df %>%
+a = lego_df %>%
     select(Name, Quantity) %>%
     group_by(Name) %>%
     summarize(Quant_by_name = sum(Quantity)) %>%
     arrange(desc(Quant_by_name)) %>%
     slice(1:5)
 ```
-
+**`r a[1,1]`**, **`r a[2,1]`**, **`r a[3,1]`**, **`r a[4,1]`** and **`r a[5,1]`** are the five most popular lego sets we found.
 
 ###3. Which five customers have spent the most money so far and how much have they spent?
 
 
-We again use dplyr on the dataframe. We use `mutate()` to create a new variable `Spent` as a product of price and quantity to get total amount of money spent. Using the similar idea in **2)**, we arrange `Spent` in a descending order and slice the top 5 rows to get the results. Finally, we drop the `USPrice` and `Quantity` columns. Our answer to the question is that **Jennifer Dana, Cecilia Mauro, Kaitlyn Degeer, Elias Garret and Hector Collins** have spent the most money, and they spent **699.98, 359.97, 339.98, 269.97 and 249.99** accordingly.
+We again use dplyr on the dataframe. We use `mutate()` to create a new variable `Spent` as a product of price and quantity to get total amount of money spent. Using the similar idea in **2)**, we arrange `Spent` in a descending order and slice the top 5 rows to get the results. Finally, we drop the `USPrice` and `Quantity` columns.
 
 ```{r}
-lego_df %>% 
+a = lego_df %>% 
     select(first_name, last_name, USPrice, Quantity) %>%
+    group_by(first_name, last_name) %>%
     mutate(Spent = USPrice * Quantity) %>%
-    arrange(desc(Spent)) %>%
-    slice(1:5) %>%
-    select(first_name, last_name, Spent)
+    summarize(Spent = sum(Spent)) %>%
+    arrange(desc(Spent))
 ```
-
-
+Our answer to the question is that [**`r a[1,1:2]`**], [**`r a[2,1:2]`**], [**`r a[3,1:2]`**], [**`r a[4,1:2]`**] and [**`r a[5,1:2]`**] have spent the most money, and they spent **`r a[1,3]`**, **`r a[2,3]`**, **`r a[3,3]`**, **`r a[4,3]`** and **`r a[5,3]`** accordingly.
 
 ###4. Which lego theme has made the most money for lego?
 
-The idea of **4)** is the same as **3)** except for an extra grouping process (using `group_by(Theme)` ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. **Star Wars, Ninjiago, City, Nexo Knights and Minecraft** are summarized as the top 5 themes. 
+The idea of **4)** is the same as **3)** except for an extra grouping process (using `group_by(Theme)` ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering.
 ```{r}
-lego_df %>% 
+a = lego_df %>% 
     select(Theme, USPrice, Quantity) %>%
     group_by(Theme) %>%
     summarise(Sum_spent = sum(USPrice * Quantity)) %>%
     arrange(desc(Sum_spent)) %>%
-    slice(1:5) %>%
-    select(Theme)
+    slice(1)
 ```
-
+**`r a[1,1]`** is the most popular theme.
 
 
 
@@ -200,27 +198,28 @@ lego_df %>%
 
 ###6. What are the five most popular hobbies of lego purchasers?
 
-We looped through the sales data frame with sapply and extracted hobbies from each person. We build the dataframe for hobbies, and use `count()` to count the number of hobbies occured. Then we use `arrange(desc())` to sort the dataframe in decending order, and use `slice` function to get the top 5 hobbies (ties broken by alphabetical order). So, the most popular hobbies we get are **Animal fancy, Skateboarding, Kitesurfing, Sculling or Rowing and Baseball**.
+We looped through the sales data frame with sapply and extracted hobbies from each person. We build the dataframe for hobbies, and use `count()` to count the number of hobbies occured. Then we use `arrange(desc())` to sort the dataframe in decending order, and use `slice` function to get the top 5 hobbies (ties broken by alphabetical order). 
 ```{r}
 hobbies = sapply(sales, function(x) x$hobbies) %>% unlist()
-data.frame(hobbies) %>%
+a = data.frame(hobbies) %>%
     count(hobbies) %>%
     arrange(desc(n)) %>%
     slice(1:5)
 ```
-
+So, the most popular hobbies we get are **`r a[1,1]`**, **`r a[2,1]`**, **`r a[3,1]`**, **`r a[4,1]`** and **`r a[5,1]`**.
 
 
 ###7. How many total pieces have been purchased from lego by these customers?
 
-Again we use dplyr to manipulate the dataset. We select pieces and quantity from dataframe and use `transmute()` to make new columns of `Total_Prices`, and dropping the existing columns of `Pieces` and `Quantity`. We sum up the rows in the newly created column and get a single number of the total purchased pieces, which is **202351**.
+Again we use dplyr to manipulate the dataset. We select pieces and quantity from dataframe and use `transmute()` to make new columns of `Total_Prices`, and dropping the existing columns of `Pieces` and `Quantity`. 
 
 ```{r}
-lego_df %>%
+a = lego_df %>%
     select(Pieces, Quantity) %>%
     transmute(Total_Pieces = Pieces * Quantity) %>%
     summarize(sum(Total_Pieces, na.rm = TRUE))
 ```
+We sum up the rows in the newly created column and get a single number of the total purchased pieces, which is **`r as.integer(a[1,1])`**.
 
 
 
@@ -230,7 +229,6 @@ First we create a list of US area codes after some research. We extract the area
 
 Finally we use the same logic as shown in *7)* that selects relevant variables, groups by state and returns the total purchase for each state. Note that we omit the purchases that don't belong to any states.
 
-Our answer to the question is that **Texas** spent the most money on legos.
 ```{r}
 area_code_table = list(
   Alaska = c(907),
@@ -298,7 +296,7 @@ lego_df = mutate(lego_df, "area_code" = as.numeric(substr(lego_df$phone_number, 
 
 lego_df$state = sapply(lego_df$area_code, state)
 
-lego_df %>%
+a = lego_df %>%
     select(state, Quantity, USPrice) %>%
     na.omit %>%
     transmute(state = state, purchase_amount = Quantity * USPrice) %>%
@@ -307,5 +305,5 @@ lego_df %>%
     arrange(desc(total)) %>%
     slice(1)
 ```
-
+Our answer to the question is that **`r a[1,1]`** spent the most money on legos.
 
