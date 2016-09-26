@@ -14,7 +14,7 @@ load("lego_sales.RData")
 
 * First find the top level names by unlisting the sales object and looking at the unique top level names `(gender, first_name, hobbies, etc)`.
     
-* Next identify we want to the subcatagory names for each catagory name. In this case, only purchases has a subcatagory name. Thankfully our nested list only two deep (no subsubcatagory names). We use a similar technique to the top level names except we want to know the length.
+* Next identify we want the subcatagory names for each catagory name. In this case, only purchases has a subcatagory name. Thankfully our nested list only two deep (no subsubcatagory names). We use a similar technique to the top level names except we want to know the length.
     
 * The top level and second level names becomes the number of columns.
     
@@ -125,7 +125,7 @@ lego_df['purchases'] = NULL
 
 ###1. What was the most common first name of purchasers? Last name?
 
-After creating the dataframe, we can use use *dplyr* to manipulate the dataframe. We first use *select()* function to first select first name and last name from the lego dataframe, then use *distinct ()* to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the *count()* and *sort()* finction to get the most commonly appeared first/last name on the top row, and least common appeared name in the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. We found out that **Jacob** and **Brown** are the most common first and last names, respectively. 
+After creating the dataframe, we can use *dplyr* to manipulate the dataframe. We first use *select()* function to first select first name and last name from the lego dataframe, then use *distinct ()* to delete all the duplicates names and only keep unique names, which are 250 names in this case. Then, we use the *count()* and *sort()* function to get the most commonly appeared first/last name at the top row, and least common appeared name at the bottom, with their number of occurences too. Finally, we print out the first row, which is the most common fist/last name of purchasers. We found out that **Jacob** and **Brown** are the most common first and last names, respectively. 
 ```{r}
 lego_df %>%
     select(first_name, last_name) %>%
@@ -158,7 +158,7 @@ lego_df %>%
 ###3. Which five customers have spent the most money so far and how much have they spent?
 
 
-We again use dplyr on the dataframe. We use *mutate()* to create a new variable Spent as a product of price and quantity. Using the similar idea in **2)**, we arrange Spent in a descending order and slice the top 5 rows to get the results. Note that after creating the new variable, we need to repipe the dataframe by selecting less variables (replacing Spent with USPrice and Quantity). Our answer to the question is that **Jennifer Dana, Cecilia Mauro, Kaitlyn Degeer, Elias Garret and Hector Collins** have spent the most money, and they spent **699.98, 359.97, 339.98, 269.97 and 249.99** accordingly.
+We again use dplyr on the dataframe. We use *mutate()* to create a new variable "Spent"" as a product of price and quantity. Using the similar idea in **2)**, we arrange Spent in a descending order and slice the top 5 rows to get the results. Note that after creating the new variable, we need to repipe the dataframe by selecting less variables (replacing Spent with USPrice and Quantity). Our answer to the question is that **Jennifer Dana, Cecilia Mauro, Kaitlyn Degeer, Elias Garret and Hector Collins** have spent the most money, and they spent **699.98, 359.97, 339.98, 269.97 and 249.99** accordingly.
 
 ```{r}
 lego_df %>% 
@@ -201,9 +201,9 @@ lego_df %>%
 
 ###6. What are the five most popular hobbies of lego purchasers?
 
-For the easy way, we looping over each individual's hobbies in sales data we can get a table of everyone's hbbies. After manually sorting we found that slicing the top 12 rows will give us the result. Note that all hobbies tied No.4 are considered among the five most popular hobbies. 
+For the easy way, we looping over each individual's hobbies in sales data, and we can get a table of everyone's hobbies. After manually sorting we found that slicing the top 12 rows will give us the result. Note that all hobbies tied No.4 are considered among the five most popular hobbies. 
 
-For the harder way that uses dplyr, we first use sapply to put all of the hobbies from all columns into one vector, hobbies.We build teh dataframe for hobbies, and use *count()* to count the number of teh hobbies occured. Then, use arrange, desc function to sort the dataframe in decending order, and use slicefunction to get the top 5 hobbies. Finally, use *select()* to only print out the top 5 hobbies without their number of occurence. In this case, there are 8 same number of occurences (occured 4 times) for the fifth popular hobby, however we only use slice(1:5), so we only get the first hobby of 4 times occured hobbies by the order of alphabet. So, the most popular hobbies we get are **Animal fancy, Skateboarding, Kitesurfing, Sculling or Rowing and Baseball**.
+For the harder way that uses dplyr, we first use sapply to put all of the hobbies from all columns into one vector, hobbies.We build the dataframe for hobbies, and use *count()* to count the number of hobbies occured. Then we use *arrange(desc())* to sort the dataframe in decending order, and use slicefunction to get the top 5 hobbies. Finally, use *select()* to only print out the top 5 hobbies without their number of occurence. In this case, there are 8 same number of occurences (occured 4 times) for the fifth popular hobby, however, we only use slice(1:5), so we only get first hobby of 4 times occured hobbies by the order of alphabet. So, the most popular hobbies we get are **Animal fancy, Skateboarding, Kitesurfing, Sculling or Rowing and Baseball**.
 ```{r}
 # easy way: using a table 
  # All hobbies tied No.4 are considered among the five most popular hobbies.
