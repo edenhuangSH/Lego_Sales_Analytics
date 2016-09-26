@@ -165,7 +165,6 @@ lego_df %>%
 
 The idea of 4) is the same as 3) except for an extra grouping process (group_by(Theme) ) after creating the variable. Then the number of row of datasets is reduced and we need to summarize the dataframe before ordering. Star Wars, Ninjiago, City, Nexo Knights and Minecraft are summarized as the top 5 themes. 
 ```{r}
-<<<<<<< HEAD
 lego_df %>% 
     select(Theme, USPrice, Quantity) %>%
     group_by(Theme) %>%
@@ -220,7 +219,7 @@ area_code = list(
   California = c(209, 213, 310, 323, 408, 415, 510, 530, 559, 562, 619, 626, 650, 661, 707, 714, 760, 805, 818, 831, 858, 909, 916, 925, 949, 951),
   Colorado = c(303, 719, 970),
   Connecticut = c(203, 860),
-  D.C = c(202),
+  DC = c(202),
   Delaware = c(302),
   Florida = c(239, 305, 321, 352, 386, 407, 561, 727, 772, 813, 850, 863, 904, 941, 954),
   Georgia = c(229, 404, 478, 706, 770, 912),
