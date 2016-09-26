@@ -189,9 +189,11 @@ a = lego_df %>%
   Grouping by gender we found the mean purchases by summing `Quantity`.
 ```{r}
 a = lego_df %>%
-    select(gender, Quantity) %>%
+    select(gender, first_name, last_name, Quantity) %>%
+    group_by(gender, first_name, last_name) %>%
+    summarize(total = sum(Quantity)) %>%
     group_by(gender) %>%
-    summarize(p = mean(Quantity)) %>%
+    summarize(p = mean(total)) %>%
     arrange(desc(p))
 ```
 we found that **`r a[1,1]`** on average buy slightly more lego sets than `r a[2,1]`. However the difference is almost negligible and more tests should be conducted.
