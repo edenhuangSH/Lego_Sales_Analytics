@@ -149,6 +149,7 @@ a = lego_df %>%
     select(Name, Quantity) %>%
     group_by(Name) %>%
     summarize(Quant_by_name = sum(Quantity)) %>%
+    ungroup()%>%
     arrange(desc(Quant_by_name)) %>%
     slice(1:5)
 a
@@ -166,6 +167,7 @@ a = lego_df %>%
     group_by(first_name, last_name) %>%
     mutate(Spent = USPrice * Quantity) %>%
     summarize(Spent = sum(Spent)) %>%
+    ungroup()%>%
     arrange(desc(Spent))
 a
 ```
@@ -179,6 +181,7 @@ a = lego_df %>%
     select(Theme, USPrice, Quantity) %>%
     group_by(Theme) %>%
     summarise(Sum_spent = sum(USPrice * Quantity)) %>%
+    ungroup()%>%
     arrange(desc(Sum_spent)) %>%
     slice(1)
 a
@@ -197,6 +200,7 @@ a = lego_df %>%
     summarize(total = sum(Quantity)) %>%
     group_by(gender) %>%
     summarize(p = mean(total)) %>%
+    ungroup()%>%
     arrange(desc(p))
 a
 ```
@@ -310,6 +314,7 @@ a = lego_df %>%
     na.omit %>%
     transmute(state = state, purchase_amount = Quantity * USPrice) %>%
     group_by(state) %>%
+    ungroup()%>%
     summarize(total = sum(purchase_amount)) %>%
     arrange(desc(total)) %>%
     slice(1)
