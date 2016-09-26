@@ -12,11 +12,11 @@ load("lego_sales.RData")
 
 **Intialize the Data Frame:**
 
-* First find the top level names by unlisting the sales object and looking at the unique top level names `(gender, first_name, hobbies, etc)`.
+* First we find the top level names by unlisting the sales objects and selecting the unique top level names `(gender, first_name, hobbies, etc)`.
     
-* Next identify we want the subcatagory names for each catagory name. In this case, only purchases has a subcatagory name. Thankfully our nested list only two deep (no subsubcatagory names). We use a similar technique to the top level names except we want to know the length.
+* Next we identify the subcatagory names for each catagory name. In this case, only the variable "purchases" has a subcatagory name. Thankfully our nested list is only two-level deep (no subsubcatagory names). We use a similar technique to the top level names except we want to know the length.
     
-* The top level and second level names becomes the number of columns.
+* The top level and second level names become the number of columns.
     
 * Next we want to find the number of rows for our data frame. For each top level catagory how many elements is there? We use a similar technique in finding the top level names, except we loop through every top level catagory. In our case, the purchase catagory has the most elements so we choose that to be the number of rows.
     
@@ -61,13 +61,13 @@ lego_df = matrix(nrow = max(sum_n), ncol = length(col_name)) %>%
 
 **Creating a helper function**
 
-* The way we set up our data frame, each row contains a unique lego set purchase. Other information will be duplicated by the number of purchases made. For example if `John Smith` purchased three different lego sets, his name would show up in three different rows.
+* The way we set up our data frame is that each row contains a unique lego set purchase. Other information will be duplicated by the number of purchases made. For example if `John Smith` purchased three different lego sets, his name would show up in three different rows.
 
 * However, when looping over the list values that don't appear return `NULL`. The R function `rep` ingores `NULL`; we would rather have it return a placeholder `NA` instead.
 
 * Finally in the case of hobby, where there a person can have multiple hobbies, we want the function to return a list instead.
 
-* We wrote a helper function `rep_safe` to handle these cases that rep fails. In this way we ensure that the return value always has the same length and `t` times the length of `x`.
+* We wrote a helper function `rep_safe` to handle these cases that rep fails. In this way we ensure that the returned value always has the same length and `t` times the length of `x`.
 
 ```{r}
 # A 'safe' rep function that returns NA value when encountering NULL
@@ -125,7 +125,7 @@ The final result is a data frame with `r nrow(lego_df)` rows and `r ncol(lego_df
 
 ###1. What was the most common first name of purchasers? Last name?
 
-After creating the dataframe, we used `dplyr` to manipulate the dataframe. We first use `select()` to keep just first and last names, then use `distinct ()` to keep only the 250 unique names in this case. Then, we use the `count()` and `sort()` function to get the most common first/last name at the top row (ties broken by alphabetical order).
+After creating the dataframe, we used `dplyr` to manipulate the dataframe. We first use `select()` to keep just first and last names, then use `distinct ()` to keep only the 250 unique names in this case. Then, we use the `count()` and `sort()` function to get the most common first/last names at the top row (ties broken by alphabetical order).
 ```{r}
 l_name = lego_df %>%
     select(first_name, last_name) %>%
@@ -143,7 +143,7 @@ We found out that **`r f_name[1]`** and **`r l_name[1]`** are the most common fi
 
 ###2. What are the five most popular lego sets based on these data?
 
-Again we use dplyr to manipulate the dataset. We use `select()` to first select `Name` and `Quantity` from the lego dataframe. Multiple people can purchase the same lego set. Therefore need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use `slice()` to select the top 5 rows (once again ties broken by alphabetical order of names).
+Again we use dplyr to manipulate the dataset. We use `select()` to first select `Name` and `Quantity` from the lego dataframe. Multiple people can purchase the same lego set. Therefore we need to group by name of the lego set and then sum up the quantity purchased by different customers. We arrange the summary table in a descending order by quantity and use `slice()` to select the top 5 rows (once again ties broken by alphabetical order of names).
 ```{r}
 a = lego_df %>%
     select(Name, Quantity) %>%
