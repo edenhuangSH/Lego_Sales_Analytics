@@ -164,8 +164,9 @@ a = lego_df %>%
     select(first_name, last_name, USPrice, Quantity) %>%
     group_by(first_name, last_name) %>%
     mutate(Spent = USPrice * Quantity) %>%
-    summarize(Spent = sum(Spent)) %>%
-    arrange(desc(Spent))
+    summarize(S = sum(Spent)) %>%
+    arrange(desc(S))
+a[1:5,]
 ```
 Our answer to the question is that [**`r a[1,1:2]`**], [**`r a[2,1:2]`**], [**`r a[3,1:2]`**], [**`r a[4,1:2]`**] and [**`r a[5,1:2]`**] have spent the most money, and they spent **`r a[1,3]`**, **`r a[2,3]`**, **`r a[3,3]`**, **`r a[4,3]`** and **`r a[5,3]`** accordingly.
 
