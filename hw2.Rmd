@@ -186,14 +186,15 @@ a = lego_df %>%
 
 ###5. Do men or women buy more lego sets (per person) on average?
 
-  Grouping by gender and finding the mean of `Quantity` we found that **male** on average buy slightly more lego sets than **female**. However the difference is almost negligible and more tests should be conducted.
+  Grouping by gender we found the mean purchases by summing `Quantity`.
 ```{r}
-lego_df %>%
+a = lego_df %>%
     select(gender, Quantity) %>%
     group_by(gender) %>%
-    summarize(mean(Quantity))
+    summarize(p = mean(Quantity)) %>%
+    arrange(desc(p))
 ```
-
+we found that **`r a[1,1]`** on average buy slightly more lego sets than `r a[2,1]`. However the difference is almost negligible and more tests should be conducted.
 
 
 ###6. What are the five most popular hobbies of lego purchasers?
