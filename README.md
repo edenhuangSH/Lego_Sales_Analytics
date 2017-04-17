@@ -4,13 +4,7 @@ source: http://www2.stat.duke.edu/~cr173/Sta523_Fa16/hw/hw2.html
 
 ## Data
 
-For this assignment you will be working with a synthetic data set of sales records for lego construction sets. We will assume that the original data was stored in a JSON format but a colleague has managed to import it into R as a list of lists data structure. The code below will load a copy of the object, called sales, into your R environment.
-
-load("lego_sales.RData")
-The original JSON file is also available, as lego_sales.json in your hw2 repo, if you would prefer to examine a text based representation of the data.
-
-The data is structured such that each entry in the top list represents a different purchaser. These list entries contain basic information about the purchaser (name, age, phone number, etc.) as well as their purchase history. Everyone in the data set has purchased at least one lego set but most have purchased more than one. The purchase histories are stored in the purchases element which is also a list of lists. Each entry within the purchases list reflects a different lego set which the customer purchased. Note that the customer may have purchased more than one copy of any particular set, this number is stored as Quantity within the purchase record.
-
+For this assignment we will be working with a synthetic data set of sales records for lego construction sets. We will assume that the original data was stored in a JSON format but a colleague has managed to import it into R as a list of lists data structure. The data is structured such that each entry in the top list represents a different purchaser. These list entries contain basic information about the purchaser (name, age, phone number, etc.) as well as their purchase history. Everyone in the data set has purchased at least one lego set but most have purchased more than one. The purchase histories are stored in the purchases element which is also a list of lists. Each entry within the purchases list reflects a different lego set which the customer purchased. Note that the customer may have purchased more than one copy of any particular set, this number is stored as Quantity within the purchase record.
 
 
 ## Task 1 - Tidying the data
